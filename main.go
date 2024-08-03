@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"educationalsp/analysis"
 	"educationalsp/lsp"
 	"educationalsp/rpc"
 	"encoding/json"
@@ -15,6 +16,8 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
 
+	state := analysis.NewState()
+
 	for scanner.Scan() {
 		msg := scanner.Bytes()
 		method, contents, err := rpc.DecodeMessage(msg)
@@ -22,11 +25,11 @@ func main() {
 			logger.Printf("Got an error: %s", err)
 			continue
 		}
-		handelMessage(logger, method, contents)
+		handelMessage(logger, state, method, contents)
 	}
 }
 
-func handelMessage(logger *log.Logger, method string, contents []byte) {
+func handelMessage(logger *log.Logger, state analysis.State, method string, contents []byte) {
 	logger.Printf("Got a message with method %s and contents", method)
 	switch method {
 	case "initialize":
@@ -37,6 +40,21 @@ func handelMessage(logger *log.Logger, method string, contents []byte) {
 		logger.Printf("Connected to: %s %s",
 			request.Params.ClientInfo.Name,
 			request.Params.ClientInfo.Version)
+		// Replay
+		msg := lsp.NewInitializeResponse(request.ID)
+		replay := rpc.EncodeMessage(msg)
+		writer := os.Stdout
+		writer.Write([]byte(replay))
+		logger.Println("replayed")
+	case "textDocument/didOpen":
+		var request lsp.DidOpenTextDocumentNotification
+		if err := json.Unmarshal(contents, &request); err != nil {
+			logger.Printf("We Couldn't Parse this: %s", err)
+		}
+		logger.Printf("Opened: %s %s ",
+			request.Params.TextDocument.URI,
+			request.Params.TextDocument.Text)
+		state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
 	}
 
 }

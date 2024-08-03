@@ -1,3 +1,10 @@
-[educationalsp]2024/08/03 19:56:31 main.go:14: hey I started
-[educationalsp]2024/08/03 19:56:31 main.go:30: Got a message with method initialize and contents
-[educationalsp]2024/08/03 19:56:31 main.go:37: Connected to: Neovim 0.10.1
+[educationalsp]2024/08/03 20:23:33 main.go:14: hey I started
+[educationalsp]2024/08/03 20:23:33 main.go:30: Got a message with method initialize and contents
+[educationalsp]2024/08/03 20:23:33 main.go:37: Connected to: Neovim 0.10.1
+[educationalsp]2024/08/03 20:23:33 main.go:45: replayed
+[educationalsp]2024/08/03 20:23:34 main.go:30: Got a message with method initialized and contents
+[educationalsp]2024/08/03 20:23:34 main.go:30: Got a message with method textDocument/didOpen and contents
+[educationalsp]2024/08/03 20:23:34 main.go:51: Opened: file:///Users/yosefsaaid/dev/educationalsp/test.md kjkfd
+
+kfjdkfjd
+ 
