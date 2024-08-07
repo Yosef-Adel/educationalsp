@@ -1,5 +1,3 @@
-Here's the updated `README.md` file including the Neovim configuration snippet:
-
 # Educational LSP
 
 This project is an educational implementation of the Language Server Protocol (LSP). It provides various LSP features such as text document synchronization, hover information, code actions, completion, and diagnostics. The goal of this project is to help developers understand the implementation details and workings of an LSP server.
