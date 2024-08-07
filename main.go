@@ -70,8 +70,26 @@ func handelMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 			logger.Printf("textDocument/hover  We Couldn't Parse this: %s", err)
 			return
 		}
-		// Create a resposnse and write it back
 		response := state.Hover(request.ID, request.Params.TextDocument.URI, request.Params.Position)
+		writeResponse(writer, response)
+	case "textDocument/definition":
+		var request lsp.DefinitionRequest
+		if err := json.Unmarshal(contents, &request); err != nil {
+			logger.Printf("textDocument/definition We Couldn't Parse this: %s", err)
+			return
+		}
+		response := state.Definition(request.ID, request.Params.TextDocument.URI, request.Params.Position)
+		writeResponse(writer, response)
+
+	case "textDocument/codeAction":
+		var request lsp.CodeActionRequest
+		if err := json.Unmarshal(contents, &request); err != nil {
+			logger.Printf("textDocument/codeAction: %s", err)
+			return
+		}
+		// Create a response
+		response := state.TextDocumentCodeAction(request.ID, request.Params.TextDocument.URI)
+		// Write it back
 		writeResponse(writer, response)
 	}
 

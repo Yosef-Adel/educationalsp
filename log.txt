@@ -1,30 +1,24 @@
-[educationalsp]2024/08/07 21:37:26 main.go:16: hey I started
-[educationalsp]2024/08/07 21:37:26 main.go:35: Got a message with method initialize and contents
-[educationalsp]2024/08/07 21:37:26 main.go:42: Connected to: Neovim 0.10.1
-[educationalsp]2024/08/07 21:37:26 main.go:48: replayed
-[educationalsp]2024/08/07 21:37:26 main.go:35: Got a message with method initialized and contents
-[educationalsp]2024/08/07 21:37:26 main.go:35: Got a message with method textDocument/didOpen and contents
-[educationalsp]2024/08/07 21:37:26 main.go:55: Opened: file:///Users/yosefsaaid/dev/educationalsp/test.md 
-[educationalsp]2024/08/07 21:37:27 main.go:35: Got a message with method textDocument/hover and contents
-[educationalsp]2024/08/07 21:37:35 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:35 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:35 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:35 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:35 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:35 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:36 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:36 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:36 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:36 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:36 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:36 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:36 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:36 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:36 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:36 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:36 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:37:36 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:37:38 main.go:35: Got a message with method textDocument/hover and contents
-[educationalsp]2024/08/07 21:38:40 main.go:35: Got a message with method textDocument/didChange and contents
-[educationalsp]2024/08/07 21:38:40 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
-[educationalsp]2024/08/07 21:38:40 main.go:35: Got a message with method textDocument/didSave and contents
+[educationalsp]2024/08/07 22:09:20 main.go:16: hey I started
+[educationalsp]2024/08/07 22:09:20 main.go:35: Got a message with method initialize and contents
+[educationalsp]2024/08/07 22:09:20 main.go:42: Connected to: Neovim 0.10.1
+[educationalsp]2024/08/07 22:09:20 main.go:48: replayed
+[educationalsp]2024/08/07 22:09:21 main.go:35: Got a message with method initialized and contents
+[educationalsp]2024/08/07 22:09:21 main.go:35: Got a message with method textDocument/didOpen and contents
+[educationalsp]2024/08/07 22:09:21 main.go:55: Opened: file:///Users/yosefsaaid/dev/educationalsp/test.md 
+[educationalsp]2024/08/07 22:09:22 main.go:35: Got a message with method textDocument/didChange and contents
+[educationalsp]2024/08/07 22:09:22 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
+[educationalsp]2024/08/07 22:09:23 main.go:35: Got a message with method textDocument/didChange and contents
+[educationalsp]2024/08/07 22:09:23 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
+[educationalsp]2024/08/07 22:09:24 main.go:35: Got a message with method textDocument/didChange and contents
+[educationalsp]2024/08/07 22:09:24 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
+[educationalsp]2024/08/07 22:09:26 main.go:35: Got a message with method textDocument/didChange and contents
+[educationalsp]2024/08/07 22:09:26 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
+[educationalsp]2024/08/07 22:09:27 main.go:35: Got a message with method textDocument/didChange and contents
+[educationalsp]2024/08/07 22:09:27 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
+[educationalsp]2024/08/07 22:09:27 main.go:35: Got a message with method textDocument/didSave and contents
+[educationalsp]2024/08/07 22:09:29 main.go:35: Got a message with method textDocument/codeAction and contents
+[educationalsp]2024/08/07 22:10:06 main.go:35: Got a message with method textDocument/didChange and contents
+[educationalsp]2024/08/07 22:10:06 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
+[educationalsp]2024/08/07 22:10:08 main.go:35: Got a message with method textDocument/didChange and contents
+[educationalsp]2024/08/07 22:10:08 main.go:63: Changed: file:///Users/yosefsaaid/dev/educationalsp/test.md
+[educationalsp]2024/08/07 22:10:10 main.go:35: Got a message with method textDocument/didSave and contents
