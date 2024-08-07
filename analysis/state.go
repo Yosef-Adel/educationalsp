@@ -6,16 +6,19 @@ import (
 	"strings"
 )
 
+// State holds the document content mapped by their URI
 type State struct {
 	Document map[string]string
 }
 
+// NewState initializes and returns a new State
 func NewState() State {
 	return State{Document: make(map[string]string)}
 }
 
+// getDiagnosticsForFile generates diagnostics for a given text
 func getDiagnosticsForFile(text string) []lsp.Diagnostic {
-	diagnostics := []lsp.Diagnostic{}
+	var diagnostics []lsp.Diagnostic
 	for row, line := range strings.Split(text, "\n") {
 		if strings.Contains(line, "VS Code") {
 			idx := strings.Index(line, "VS Code")
@@ -35,25 +38,26 @@ func getDiagnosticsForFile(text string) []lsp.Diagnostic {
 				Source:   "Common Sense",
 				Message:  "Great choice :)",
 			})
-
 		}
 	}
 
 	return diagnostics
 }
 
+// OpenDocument handles the opening of a document, storing its content and returning diagnostics
 func (s *State) OpenDocument(uri, text string) []lsp.Diagnostic {
 	s.Document[uri] = text
 	return getDiagnosticsForFile(text)
 }
 
+// UpdateDocument handles the updating of a document, storing its content and returning diagnostics
 func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
 	s.Document[uri] = text
 	return getDiagnosticsForFile(text)
 }
 
+// Hover provides a hover response for a given position in the document
 func (s *State) Hover(id int, uri string, position lsp.Position) lsp.HoverResponse {
-
 	document := s.Document[uri]
 	return lsp.HoverResponse{
 		Response: lsp.Response{
@@ -64,9 +68,9 @@ func (s *State) Hover(id int, uri string, position lsp.Position) lsp.HoverRespon
 			Contents: fmt.Sprintf("File: %s, Line: %d, Col: %d Character Length: %d", uri, position.Line, position.Character, len(document)),
 		},
 	}
-
 }
 
+// Definition provides a definition response for a given position in the document
 func (s *State) Definition(id int, uri string, position lsp.Position) lsp.DefinitionResponse {
 	return lsp.DefinitionResponse{
 		Response: lsp.Response{
@@ -81,21 +85,21 @@ func (s *State) Definition(id int, uri string, position lsp.Position) lsp.Defini
 			},
 		},
 	}
-
 }
 
+// TextDocumentCodeAction provides code actions for a given document
 func (s *State) TextDocumentCodeAction(id int, uri string) lsp.TextDocumentCodeActionResponse {
 	text := s.Document[uri]
-
-	actions := []lsp.CodeAction{}
+	var actions []lsp.CodeAction
 	for row, line := range strings.Split(text, "\n") {
 		idx := strings.Index(line, "VS Code")
 		if idx >= 0 {
-			replaceChange := map[string][]lsp.TextEdit{}
-			replaceChange[uri] = []lsp.TextEdit{
-				{
-					Range:   LineRange(row, idx, idx+len("VS Code")),
-					NewText: "Neovim",
+			replaceChange := map[string][]lsp.TextEdit{
+				uri: {
+					{
+						Range:   LineRange(row, idx, idx+len("VS Code")),
+						NewText: "Neovim",
+					},
 				},
 			}
 
@@ -104,11 +108,12 @@ func (s *State) TextDocumentCodeAction(id int, uri string) lsp.TextDocumentCodeA
 				Edit:  &lsp.WorkspaceEdit{Changes: replaceChange},
 			})
 
-			censorChange := map[string][]lsp.TextEdit{}
-			censorChange[uri] = []lsp.TextEdit{
-				{
-					Range:   LineRange(row, idx, idx+len("VS Code")),
-					NewText: "VS C*de",
+			censorChange := map[string][]lsp.TextEdit{
+				uri: {
+					{
+						Range:   LineRange(row, idx, idx+len("VS Code")),
+						NewText: "VS C*de",
+					},
 				},
 			}
 
@@ -119,19 +124,18 @@ func (s *State) TextDocumentCodeAction(id int, uri string) lsp.TextDocumentCodeA
 		}
 	}
 
-	response := lsp.TextDocumentCodeActionResponse{
+	return lsp.TextDocumentCodeActionResponse{
 		Response: lsp.Response{
 			RPC: "2.0",
 			ID:  &id,
 		},
 		Result: actions,
 	}
-
-	return response
 }
 
+// TextDocumentCompletion provides completion items for a given document
 func (s *State) TextDocumentCompletion(id int, uri string) lsp.CompletionResponse {
-	// Ask your static analysis tools to figure out good completions
+	// Placeholder for static analysis tools to provide good completions
 	items := []lsp.CompletionItem{
 		{
 			Label:         "Neovim (BTW)",
@@ -140,17 +144,16 @@ func (s *State) TextDocumentCompletion(id int, uri string) lsp.CompletionRespons
 		},
 	}
 
-	response := lsp.CompletionResponse{
+	return lsp.CompletionResponse{
 		Response: lsp.Response{
 			RPC: "2.0",
 			ID:  &id,
 		},
 		Result: items,
 	}
-
-	return response
 }
 
+// LineRange creates a range object for a specific line and character positions
 func LineRange(line, start, end int) lsp.Range {
 	return lsp.Range{
 		Start: lsp.Position{

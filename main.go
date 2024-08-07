@@ -12,90 +12,100 @@ import (
 )
 
 func main() {
+	// Initialize logger
 	logger := getLogger("log.txt")
-	logger.Println("hey I started")
+	logger.Println("Server started")
+
+	// Initialize scanner for reading from stdin
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
 
+	// Initialize state and writer
 	state := analysis.NewState()
 	writer := os.Stdout
 
+	// Main loop to handle incoming messages
 	for scanner.Scan() {
 		msg := scanner.Bytes()
 		method, contents, err := rpc.DecodeMessage(msg)
 		if err != nil {
-			logger.Printf("Got an error: %s", err)
+			logger.Printf("Error decoding message: %s", err)
 			continue
 		}
-		handelMessage(logger, writer, state, method, contents)
+		handleMessage(logger, writer, state, method, contents)
 	}
 }
 
-func handelMessage(logger *log.Logger, writer io.Writer, state analysis.State, method string, contents []byte) {
-	logger.Printf("Got a message with method %s and contents", method)
+// handleMessage processes incoming messages based on their method
+func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, method string, contents []byte) {
+	logger.Printf("Received message with method %s", method)
 	switch method {
 	case "initialize":
 		var request lsp.InitializeRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("We Couldn't Parse this: %s", err)
+			logger.Printf("Error parsing initialize request: %s", err)
+			return
 		}
-		logger.Printf("Connected to: %s %s",
-			request.Params.ClientInfo.Name,
-			request.Params.ClientInfo.Version)
-		// Replay
-		msg := lsp.NewInitializeResponse(request.ID)
-		writeResponse(writer, msg)
-		logger.Println("replayed")
+		logger.Printf("Connected to: %s %s", request.Params.ClientInfo.Name, request.Params.ClientInfo.Version)
+		response := lsp.NewInitializeResponse(request.ID)
+		writeResponse(writer, response)
+		logger.Println("Initialization response sent")
+
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/didOpen We Couldn't Parse this: %s", err)
+			logger.Printf("Error parsing didOpen request: %s", err)
 			return
 		}
-		logger.Printf("Opened: %s ", request.Params.TextDocument.URI)
-		diagnostic := state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
-		writeResponse(writer, lsp.PublishDiagnosticsNotification{
+		logger.Printf("Document opened: %s", request.Params.TextDocument.URI)
+		diagnostics := state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
+		notification := lsp.PublishDiagnosticsNotification{
 			Notification: lsp.Notification{
 				RPC:    "2.0",
 				Method: "textDocument/publishDiagnostics",
 			},
 			Params: lsp.PublishDiagnosticsParams{
 				URI:         request.Params.TextDocument.URI,
-				Diagnostics: diagnostic,
+				Diagnostics: diagnostics,
 			},
-		})
+		}
+		writeResponse(writer, notification)
+
 	case "textDocument/didChange":
 		var request lsp.DidChangeTextDocumentNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/didChange We Couldn't Parse this: %s", err)
+			logger.Printf("Error parsing didChange request: %s", err)
 			return
 		}
-		logger.Printf("Changed: %s", request.Params.TextDocument.URI)
+		logger.Printf("Document changed: %s", request.Params.TextDocument.URI)
 		for _, change := range request.Params.ContentChanges {
-			diagnostic := state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
-			writeResponse(writer, lsp.PublishDiagnosticsNotification{
+			diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
+			notification := lsp.PublishDiagnosticsNotification{
 				Notification: lsp.Notification{
 					RPC:    "2.0",
 					Method: "textDocument/publishDiagnostics",
 				},
 				Params: lsp.PublishDiagnosticsParams{
 					URI:         request.Params.TextDocument.URI,
-					Diagnostics: diagnostic,
+					Diagnostics: diagnostics,
 				},
-			})
+			}
+			writeResponse(writer, notification)
 		}
+
 	case "textDocument/hover":
 		var request lsp.HoverRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/hover  We Couldn't Parse this: %s", err)
+			logger.Printf("Error parsing hover request: %s", err)
 			return
 		}
 		response := state.Hover(request.ID, request.Params.TextDocument.URI, request.Params.Position)
 		writeResponse(writer, response)
+
 	case "textDocument/definition":
 		var request lsp.DefinitionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/definition We Couldn't Parse this: %s", err)
+			logger.Printf("Error parsing definition request: %s", err)
 			return
 		}
 		response := state.Definition(request.ID, request.Params.TextDocument.URI, request.Params.Position)
@@ -104,37 +114,34 @@ func handelMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 	case "textDocument/codeAction":
 		var request lsp.CodeActionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/codeAction: %s", err)
+			logger.Printf("Error parsing codeAction request: %s", err)
 			return
 		}
-		// Create a response
 		response := state.TextDocumentCodeAction(request.ID, request.Params.TextDocument.URI)
-		// Write it back
 		writeResponse(writer, response)
+
 	case "textDocument/completion":
 		var request lsp.CompletionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/completion: %s", err)
+			logger.Printf("Error parsing completion request: %s", err)
 			return
 		}
-		// Create a response
 		response := state.TextDocumentCompletion(request.ID, request.Params.TextDocument.URI)
-		// Write it back
 		writeResponse(writer, response)
 	}
-
 }
 
+// writeResponse encodes and writes the response message
 func writeResponse(writer io.Writer, msg any) {
-	replay := rpc.EncodeMessage(msg)
-	writer.Write([]byte(replay))
+	response := rpc.EncodeMessage(msg)
+	writer.Write([]byte(response))
 }
 
+// getLogger initializes and returns a logger
 func getLogger(filename string) *log.Logger {
 	logfile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
 	if err != nil {
-		panic("hey, can't open the logfile")
+		panic("Cannot open logfile")
 	}
-
 	return log.New(logfile, "[educationalsp]", log.Ldate|log.Ltime|log.Lshortfile)
 }
