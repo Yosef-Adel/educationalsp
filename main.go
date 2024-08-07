@@ -6,6 +6,7 @@ import (
 	"educationalsp/lsp"
 	"educationalsp/rpc"
 	"encoding/json"
+	"io"
 	"log"
 	"os"
 )
@@ -17,6 +18,7 @@ func main() {
 	scanner.Split(rpc.Split)
 
 	state := analysis.NewState()
+	writer := os.Stdout
 
 	for scanner.Scan() {
 		msg := scanner.Bytes()
@@ -25,11 +27,11 @@ func main() {
 			logger.Printf("Got an error: %s", err)
 			continue
 		}
-		handelMessage(logger, state, method, contents)
+		handelMessage(logger, writer, state, method, contents)
 	}
 }
 
-func handelMessage(logger *log.Logger, state analysis.State, method string, contents []byte) {
+func handelMessage(logger *log.Logger, writer io.Writer, state analysis.State, method string, contents []byte) {
 	logger.Printf("Got a message with method %s and contents", method)
 	switch method {
 	case "initialize":
@@ -42,9 +44,7 @@ func handelMessage(logger *log.Logger, state analysis.State, method string, cont
 			request.Params.ClientInfo.Version)
 		// Replay
 		msg := lsp.NewInitializeResponse(request.ID)
-		replay := rpc.EncodeMessage(msg)
-		writer := os.Stdout
-		writer.Write([]byte(replay))
+		writeResponse(writer, msg)
 		logger.Println("replayed")
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
@@ -64,8 +64,22 @@ func handelMessage(logger *log.Logger, state analysis.State, method string, cont
 		for _, change := range request.Params.ContentChanges {
 			state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
 		}
+	case "textDocument/hover":
+		var request lsp.HoverRequest
+		if err := json.Unmarshal(contents, &request); err != nil {
+			logger.Printf("textDocument/hover  We Couldn't Parse this: %s", err)
+			return
+		}
+		// Create a resposnse and write it back
+		response := state.Hover(request.ID, request.Params.TextDocument.URI, request.Params.Position)
+		writeResponse(writer, response)
 	}
 
+}
+
+func writeResponse(writer io.Writer, msg any) {
+	replay := rpc.EncodeMessage(msg)
+	writer.Write([]byte(replay))
 }
 
 func getLogger(filename string) *log.Logger {
