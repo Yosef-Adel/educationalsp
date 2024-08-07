@@ -73,7 +73,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 ```
 
-Replace `"/Users/yosefsaaid/dev/educationalsp/main"` with the path to your compiled LSP server binary.
+Replace `"PATH_TO_BIN"` with the path to your compiled LSP server binary.
 
 ## Example Messages
 
