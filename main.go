@@ -49,12 +49,21 @@ func handelMessage(logger *log.Logger, state analysis.State, method string, cont
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("We Couldn't Parse this: %s", err)
+			logger.Printf("textDocument/didOpen We Couldn't Parse this: %s", err)
+			return
 		}
-		logger.Printf("Opened: %s %s ",
-			request.Params.TextDocument.URI,
-			request.Params.TextDocument.Text)
+		logger.Printf("Opened: %s ", request.Params.TextDocument.URI)
 		state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
+	case "textDocument/didChange":
+		var request lsp.DidChangeTextDocumentNotification
+		if err := json.Unmarshal(contents, &request); err != nil {
+			logger.Printf("textDocument/didChange We Couldn't Parse this: %s", err)
+			return
+		}
+		logger.Printf("Changed: %s", request.Params.TextDocument.URI)
+		for _, change := range request.Params.ContentChanges {
+			state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
+		}
 	}
 
 }

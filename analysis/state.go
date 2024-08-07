@@ -8,6 +8,10 @@ func NewState() State {
 	return State{Document: make(map[string]string)}
 }
 
-func (s *State) OpenDocument(document, text string) {
-	s.Document[document] = text
+func (s *State) OpenDocument(uri, text string) {
+	s.Document[uri] = text
+}
+
+func (s *State) UpdateDocument(uri, text string) {
+	s.Document[uri] = text
 }
