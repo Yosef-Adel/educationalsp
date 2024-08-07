@@ -27,7 +27,7 @@ The project is organized into the following packages:
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/educationalsp.git
+   git clone https://github.com/yosef-adel/educationalsp.git
    ```
 2. Navigate to the project directory:
    ```sh
@@ -57,7 +57,7 @@ To connect Neovim to the LSP server, add the following configuration to your Neo
 ```lua
 local client = vim.lsp.start_client({
     name = "educationalsp",
-    cmd = { "/Users/yosefsaaid/dev/educationalsp/main" },
+    cmd = { "PATH_TO_BIN" },
 })
 
 if not client then
