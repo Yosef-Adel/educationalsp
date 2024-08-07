@@ -1,11 +1,11 @@
-kjkfd
+This is A Test Buffer
 
-VS Code
+Diagnostic: VS Code
 
-Neovime
+Diagnostic: Neovim (BTW)
 
-kfjdkfjd
+Code Action VS Code
 
-something
+Completion Neovim (BTW)
 
-kjfdkjfkdj
+Hover Me
